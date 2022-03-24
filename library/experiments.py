@@ -34,7 +34,7 @@ def get_experiment_config(exp_name,city):
     elif 'dis' in exp_name:
         return read_similarity_confs(city,'dis')
 
-def experiment(exp_name,city,model,epochs=None,batch_size=None):
+def experiment(exp_name,city,model_fn,epochs=None,batch_size=None):
     """
     exp_name="(overall/sim/dis)_*"
     city=("Delhi"/"Dgp")
@@ -42,7 +42,7 @@ def experiment(exp_name,city,model,epochs=None,batch_size=None):
     stat=[]
     exp_config=get_experiment_config(exp_name,city)
     for exp, conf in exp_config.items():
-        met=run_experiment_with(model,city,conf["train_devices"],conf["test_devices"],epochs,batch_size)
+        met=run_experiment_with(model_fn(),city,conf["train_devices"],conf["test_devices"],epochs,batch_size)
         stat.append(met)
     df=pd.DataFrame(stat)
     df.to_csv(f"./logs/exp/{exp_name}_{city}.csv",index=False)

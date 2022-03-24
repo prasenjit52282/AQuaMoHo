@@ -1,10 +1,11 @@
 import numpy as np
 import tensorflow as tf
 from ..metrics import *
-from ..constants import seed,features,label,window
+from ..constants import seed,features,label,window,model_arch,epochs,batch_size
 from ..utils import read_dataset,read_dataset_from_files
 from ..helper import split_scale_dataset,set_scale_dataset
 import tensorflow.keras.backend as K
+from tensorflow.keras.regularizers import l2
 
 class Attention(tf.keras.layers.Layer):
     def __init__(self,**kwargs):
@@ -28,36 +29,37 @@ class RNN:
     """
     Usage:
     
-    rnn=RNN({'lstm1':dict(units=32,seq=True),
+    rnn=RNN({'lstm1':dict(units=32,seq=True,l2=0.01),
              'dp1':dict(rate=0.2),
              'atten':dict(),
-             'fc':dict(units=5,activ="softmax")})
+             'fc':dict(units=5,activ="softmax",l2=0.01)})
 
     rnn.train_on_file_sets(["./Data/Dgp/Device1_merged.csv"],["./Data/Dgp/Device1_merged.csv"],10,32)
     rnn.train_on_files("./Data/Dgp/*",10,32)
     """
-    def __init__(self,arch={},checkpoint_filepath="./logs/model/checkpoint",seed=seed):
+    def __init__(self,arch=model_arch,checkpoint_filepath="./logs/model/checkpoint",seed=seed):
         tf.random.set_seed(seed)
         self.model=self.get_model(arch)
         self.checkpoint_filepath=checkpoint_filepath
         self.pred_fn=lambda x:np.argmax(self.model.predict(x),axis=1)
         
     def get_model(self,arch={}):
+        l2_reg=lambda l2_coef : None if l2_coef is None else l2(l2_coef)
         model=tf.keras.Sequential()
         for layer,conf in arch.items():
             if 'lstm' in layer:
-                model.add(tf.keras.layers.LSTM(units=conf["units"],return_sequences=conf["seq"],name=layer))
+                model.add(tf.keras.layers.LSTM(units=conf["units"],return_sequences=conf["seq"],kernel_regularizer=l2_reg(conf["l2"]),name=layer))
             if 'dp' in layer:
                 model.add(tf.keras.layers.Dropout(rate=conf["rate"],name=layer))
             if 'atten' in layer:
                 model.add(Attention(name=layer))
             if 'fc' in layer:
-                model.add(tf.keras.layers.Dense(units=conf["units"],activation=conf["activ"],name=layer))
+                model.add(tf.keras.layers.Dense(units=conf["units"],activation=conf["activ"],kernel_regularizer=l2_reg(conf["l2"]),name=layer))
         model.compile(loss="sparse_categorical_crossentropy",optimizer="adam",metrics=['accuracy'])
         return model
             
         
-    def train(self,X_train,X_test,y_train,y_test,epochs=100,batch_size=32):
+    def train(self,X_train,X_test,y_train,y_test,epochs=epochs,batch_size=batch_size):
         self.X_train,self.X_test,self.y_train,self.y_test=\
         X_train,X_test,y_train,y_test
         model_checkpoint_callback=\
