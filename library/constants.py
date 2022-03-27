@@ -27,12 +27,12 @@ window=18
 seed=42
 
 
-model_arch={'lstm1':dict(units=32,seq=True,l2=None),
+model_arch={'lstm1':dict(units=128,seq=True,l2=None),
             'atten':dict(),
             'dp1':dict(rate=0.2),
-            'fc1':dict(units=32,activ="tanh",l2=None),
+            'fc1':dict(units=128,activ="tanh",l2=0.001),
             'dp2':dict(rate=0.2),
             'fc2':dict(units=5,activ="softmax",l2=None)}
 
-epochs=1000
-batch_size=64
+epochs=200
+batch_size=256
