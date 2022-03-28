@@ -6,6 +6,7 @@ from ..utils import read_dataset,read_dataset_from_files
 from ..helper import split_scale_dataset,set_scale_dataset
 import tensorflow.keras.backend as K
 from tensorflow.keras.regularizers import l2
+from sklearn.utils import class_weight
 
 class Attention(tf.keras.layers.Layer):
     def __init__(self,**kwargs):
@@ -60,14 +61,16 @@ class RNN:
             
         
     def train(self,X_train,X_test,y_train,y_test,epochs=epochs,batch_size=batch_size):
-        self.X_train,self.X_test,self.y_train,self.y_test=\
-        X_train,X_test,y_train,y_test
+        self.X_train,self.X_test,self.y_train,self.y_test=X_train,X_test,y_train,y_test
+        cls_weights=class_weight.compute_class_weight(class_weight='balanced',classes=np.unique(y_train),y=y_train)
+        dict_cls_weight=dict(zip(np.unique(y_train),cls_weights))
         model_checkpoint_callback=\
         tf.keras.callbacks.ModelCheckpoint(filepath=self.checkpoint_filepath,save_weights_only=True,
                                            monitor='val_accuracy',mode='max',save_best_only=True)
         self.history=self.model.fit(self.X_train,self.y_train,epochs=epochs,batch_size=batch_size,
                                     validation_data=(self.X_test,self.y_test),
-                                    callbacks=[model_checkpoint_callback])
+                                    callbacks=[model_checkpoint_callback],
+                                    class_weight=dict_cls_weight)
         self.restore_best_weights()
         self.print_performance()
         
