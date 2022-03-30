@@ -1,16 +1,32 @@
+import argparse
 from library.models.rnn import RNN
+from library.models.rf import RandomForest
+from library.constants import epochs,batch_size
+from library.experiments import experiment,datasplit_experiment
 
-city="Delhi"
-data_pattern=f"./Data/{city}/*"
+parser = argparse.ArgumentParser(description='Training for different experiments with rf and rnn')
+parser.add_argument('--city', type=str, default="Dgp", help='Required name of city (Dgp/Delhi)')
+parser.add_argument('--restore', help='Required decision to restore weights',action='store_true')
 
-rnn_model_fn=lambda : RNN({'lstm1':dict(units=128,seq=True,l2=None),
-                           'atten':dict(),
-                           'dp1':dict(rate=0.2),
-                           'fc1':dict(units=128,activ="tanh",l2=0.001),
-                           'dp2':dict(rate=0.2),
-                           'fc2':dict(units=5,activ="softmax",l2=None)})
+args = parser.parse_args()
+city=args.city
+restore=args.restore
+print(f"Training on city: {city} with restore: {restore}")
 
-rnn=rnn_model_fn()
-rnn.train_on_files(data_pattern,test_size=0.3,epochs=200,batch_size=256)
-rnn.model.summary()
-print(rnn.metrics)
+#Model function
+rf_model_fn=lambda path=None,restore=False: RandomForest()
+rnn_model_fn=lambda path='./logs/model/checkpoint',restore=False: RNN(checkpoint_filepath=path,restore=restore)
+
+
+#Random Forest
+df=datasplit_experiment("split_rf",city,rf_model_fn,test_size=0.3,epochs=epochs,batch_size=batch_size,restore=restore)
+df=experiment('overall_rf',city,rf_model_fn,restore=restore)
+df=experiment('sim_rf',city,rf_model_fn,restore=restore)
+df=experiment('dis_rf',city,rf_model_fn,restore=restore)
+
+
+#RNN
+df=datasplit_experiment("split_rnn",city,rnn_model_fn,test_size=0.3,epochs=epochs,batch_size=batch_size,restore=restore)
+df=experiment('overall_rnn',city,rnn_model_fn,epochs=epochs,batch_size=batch_size,restore=restore)
+df=experiment('sim_rnn',city,rnn_model_fn,epochs=epochs,batch_size=batch_size,restore=restore)
+df=experiment('dis_rnn',city,rnn_model_fn,epochs=epochs,batch_size=batch_size,restore=restore)
