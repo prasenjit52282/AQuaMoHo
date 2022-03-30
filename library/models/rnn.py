@@ -38,8 +38,9 @@ class RNN:
     rnn.train_on_file_sets(["./Data/Dgp/Device1_merged.csv"],["./Data/Dgp/Device1_merged.csv"],10,32)
     rnn.train_on_files("./Data/Dgp/*",10,32)
     """
-    def __init__(self,arch=model_arch,checkpoint_filepath="./logs/model/checkpoint",seed=seed):
+    def __init__(self,arch=model_arch,checkpoint_filepath="./logs/model/checkpoint",seed=seed,restore=False):
         tf.random.set_seed(seed)
+        self.restore=restore
         self.model=self.get_model(arch)
         self.checkpoint_filepath=checkpoint_filepath
         self.pred_fn=lambda x:np.argmax(self.model.predict(x),axis=1)
@@ -64,15 +65,19 @@ class RNN:
         self.X_train,self.X_test,self.y_train,self.y_test=X_train,X_test,y_train,y_test
         cls_weights=class_weight.compute_class_weight(class_weight='balanced',classes=np.unique(y_train),y=y_train)
         dict_cls_weight=dict(zip(np.unique(y_train),cls_weights))
-        model_checkpoint_callback=\
-        tf.keras.callbacks.ModelCheckpoint(filepath=self.checkpoint_filepath,save_weights_only=True,
-                                           monitor='val_accuracy',mode='max',save_best_only=True)
-        self.history=self.model.fit(self.X_train,self.y_train,epochs=epochs,batch_size=batch_size,
-                                    validation_data=(self.X_test,self.y_test),
-                                    callbacks=[model_checkpoint_callback],
-                                    class_weight=dict_cls_weight)
+        if self.restore==False:
+            model_checkpoint_callback=\
+            tf.keras.callbacks.ModelCheckpoint(filepath=self.checkpoint_filepath,save_weights_only=True,
+                                            monitor='val_accuracy',mode='max',save_best_only=True)
+            self.history=self.model.fit(self.X_train,self.y_train,epochs=epochs,batch_size=batch_size,
+                                        validation_data=(self.X_test,self.y_test),
+                                        callbacks=[model_checkpoint_callback],
+                                        class_weight=dict_cls_weight)
+        else:
+            _=self.pred_fn(X_test) #initilize the model
         self.restore_best_weights()
         self.print_performance()
+        return self.AUC_ROC()
         
     def restore_best_weights(self):
         print("restoring best weights...")
@@ -80,20 +85,20 @@ class RNN:
         
     def train_on_dataset(self,dataset,test_size,epochs,batch_size):
         X_train,X_test,y_train,y_test,_=split_scale_dataset(dataset,test_size)
-        self.train(X_train,X_test,y_train,y_test,epochs,batch_size)
+        return self.train(X_train,X_test,y_train,y_test,epochs,batch_size)
         
     def train_on_sets(self,train_dataset,test_dataset,epochs,batch_size):
         X_train,X_test,y_train,y_test,_=set_scale_dataset(train_dataset,test_dataset)
-        self.train(X_train,X_test,y_train,y_test,epochs,batch_size)
+        return self.train(X_train,X_test,y_train,y_test,epochs,batch_size)
         
     def train_on_files(self,pattern,test_size,epochs,batch_size,features=features,label=label,window=window):
         data=read_dataset(pattern,features,label,window)
-        self.train_on_dataset(data,test_size,epochs,batch_size)
+        return self.train_on_dataset(data,test_size,epochs,batch_size)
         
     def train_on_file_sets(self,train_files,test_files,epochs,batch_size,features=features,label=label,window=window):
         train_data=read_dataset_from_files(train_files,features,label,window)
         test_data=read_dataset_from_files(test_files,features,label,window)
-        self.train_on_sets(train_data,test_data,epochs,batch_size)
+        return self.train_on_sets(train_data,test_data,epochs,batch_size)
     
     def print_performance(self):
         res="Train............\n"
@@ -117,3 +122,7 @@ class RNN:
         for m,v in test_metrics.items():
             met[m+'_test']=v
         return met
+
+    def AUC_ROC(self):
+        fig=AUC_ROC(self)
+        return fig

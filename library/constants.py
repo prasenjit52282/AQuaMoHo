@@ -36,3 +36,7 @@ model_arch={'lstm1':dict(units=128,seq=True,l2=None),
 
 epochs=200
 batch_size=256
+
+figsize=(11,7)
+linewidth=4
+fontsize=22
