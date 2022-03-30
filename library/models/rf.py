@@ -5,7 +5,7 @@ from ..helper import split_scale_dataset,set_scale_dataset
 from sklearn.ensemble import RandomForestClassifier
 
 class RandomForest:
-    def __init__(self,n_est=100,max_depth=20):
+    def __init__(self,n_est=100,max_depth=20,restore=None):
         self.model=RandomForestClassifier(n_estimators=n_est,max_depth=max_depth,random_state=seed)
         self.pred_fn=lambda x:self.model.predict(x)
         
@@ -14,23 +14,24 @@ class RandomForest:
         X_train,X_test,y_train,y_test
         self.model.fit(self.X_train,self.y_train)
         self.print_performance()
+        return self.AUC_ROC()
         
     def train_on_dataset(self,dataset,test_size,epochs=None,batch_size=None):
         X_train,X_test,y_train,y_test,_=split_scale_dataset(dataset,test_size)
-        self.train(X_train,X_test,y_train,y_test)
+        return self.train(X_train,X_test,y_train,y_test)
         
     def train_on_sets(self,train_dataset,test_dataset,epochs=None,batch_size=None):
         X_train,X_test,y_train,y_test,_=set_scale_dataset(train_dataset,test_dataset)
-        self.train(X_train,X_test,y_train,y_test)
+        return self.train(X_train,X_test,y_train,y_test)
         
     def train_on_files(self,pattern,test_size,features=features,label=label,epochs=None,batch_size=None):
         data=read_dataset(pattern,features,label)
-        self.train_on_dataset(data,test_size)
+        return self.train_on_dataset(data,test_size)
         
     def train_on_file_sets(self,train_files,test_files,features=features,label=label,epochs=None,batch_size=None):
         train_data=read_dataset_from_files(train_files,features,label)
         test_data=read_dataset_from_files(test_files,features,label)
-        self.train_on_sets(train_data,test_data)
+        return self.train_on_sets(train_data,test_data)
     
     def print_performance(self):
         res="Train............\n"
@@ -54,3 +55,7 @@ class RandomForest:
         for m,v in test_metrics.items():
             met[m+'_test']=v
         return met
+
+    def AUC_ROC(self):
+        fig=AUC_ROC(self)
+        return fig
