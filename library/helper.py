@@ -1,3 +1,4 @@
+import numpy as np
 from .constants import seed
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
@@ -9,6 +10,7 @@ def scale(X_train,X_test):
     return X_train,X_test,scaler
 
 def split_scale_dataset(data,test_size,seed=seed):
+    np.random.seed(seed)
     X_train, X_test, y_train, y_test = train_test_split(data["X"], data["y"],test_size=test_size,random_state=seed,stratify=data["y"])
     X_train,X_test,scaler=scale(X_train,X_test)
     if 'window_size'in data:
