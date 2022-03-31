@@ -63,16 +63,13 @@ class RNN:
         
     def train(self,X_train,X_test,y_train,y_test,epochs=epochs,batch_size=batch_size):
         self.X_train,self.X_test,self.y_train,self.y_test=X_train,X_test,y_train,y_test
-        cls_weights=class_weight.compute_class_weight(class_weight='balanced',classes=np.unique(y_train),y=y_train)
-        dict_cls_weight=dict(zip(np.unique(y_train),cls_weights))
         if self.restore==False:
             model_checkpoint_callback=\
             tf.keras.callbacks.ModelCheckpoint(filepath=self.checkpoint_filepath,save_weights_only=True,
                                             monitor='val_accuracy',mode='max',save_best_only=True)
             self.history=self.model.fit(self.X_train,self.y_train,epochs=epochs,batch_size=batch_size,
                                         validation_data=(self.X_test,self.y_test),
-                                        callbacks=[model_checkpoint_callback],
-                                        class_weight=dict_cls_weight)
+                                        callbacks=[model_checkpoint_callback])
         else:
             _=self.pred_fn(X_test) #initilize the model
         self.restore_best_weights()
