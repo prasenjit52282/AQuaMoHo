@@ -1,3 +1,4 @@
+import numpy as np
 import tensorflow as tf
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -9,7 +10,8 @@ def get_performance(X,y,pred_fn=None):
     pref=\
     {'f1_score':f1_score(y,pred,average="weighted"),
      'prec_score':precision_score(y,pred,average="weighted"),
-     'rec_score':recall_score(y,pred,average='weighted')}
+     'rec_score':recall_score(y,pred,average='weighted'),
+     'spec_score':specificity(y,pred)}
     return pref
 
 def get_report(X,y,pred_fn=None):
@@ -53,3 +55,20 @@ def AUC_ROC(model,n_class=5):
     plt.tight_layout()
     plt.close()
     return fig
+
+
+def specificity(y_true, y_pred, classes=None):
+    if classes is None: # Determine classes from the values
+        classes = set(np.concatenate((np.unique(y_true), np.unique(y_pred))))
+    specs = []
+    for cls in classes:
+        y_true_cls = (y_true == cls).astype(int)
+        y_pred_cls = (y_pred == cls).astype(int)
+
+        fp = sum(y_pred_cls[y_true_cls != 1])
+        tn = sum(y_pred_cls[y_true_cls == 0] == False)
+
+        specificity_val = tn / (tn + fp)
+        specs.append(specificity_val)
+
+    return np.mean(specs)
