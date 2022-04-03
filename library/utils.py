@@ -38,10 +38,11 @@ def read(f):
 def get_features_labels(df,features,label):
     feat=df[features].copy()
     lbl=df[label].copy()
-    return feat,lbl
+    return feat,lbl,df['timestamp'].values
 
 def do_windowing(feat,lbl,window_size):
     X=[];y=[];i=0
+    filter=[]
     total_size=feat.shape[0]
     while i+window_size<=total_size:
         ser=feat.iloc[i:i+window_size,:].values
@@ -49,27 +50,30 @@ def do_windowing(feat,lbl,window_size):
         if not (np.isnan(ser).mean()>0):
             X.append(ser)
             y.append(aqi)
+            filter.append(True)
+        else:filter.append(False)
         i+=1
     y_arr=np.array(y)
     X_arr=np.array(X)
-    return X_arr,y_arr
+    filter=np.array(filter)
+    return X_arr,y_arr,filter
 
 def read_csv_raw(f,features,label):
     df=read(f)
-    X,y=get_features_labels(df,features,label)
-    return {'X':X,'y':y}
+    X,y,ts=get_features_labels(df,features,label)
+    return {'X':X,'y':y,'ts':ts}
 
 def read_csv_filtered(f,features,label):
     df=read(f).dropna()
-    X,y=get_features_labels(df,features,label)
-    return {'X':X,'y':y}
+    X,y,ts=get_features_labels(df,features,label)
+    return {'X':X,'y':y,'ts':ts}
 
 def read_csv_windowing(f,features,label,window):
     data=read_csv_raw(f,features,label)
-    X,y=do_windowing(data['X'],data['y'],window)
+    X,y,filter=do_windowing(data['X'],data['y'],window)
     feat_size=X.shape[-1]
     return {'X':X.reshape(-1,window*feat_size),'y':y,
-            'feat_size':feat_size,"window_size":window}
+            'feat_size':feat_size,"window_size":window,'ts':data['ts'][:-window+1][filter]}
 
 def read_csv(f,features,label,window=None):
     if window is None:
@@ -79,21 +83,23 @@ def read_csv(f,features,label,window=None):
     
 def read_dataset(loc,features,label,window=None):
     files=glob.glob(loc)
-    X=[];y=[]
+    X=[];y=[];ts=[]
     for f in files:
         data=read_csv(f,features,label,window)
         X.append(data['X'])
         y.append(data['y'])
-    if window is None:return {'X':np.concatenate(X,axis=0),'y':np.concatenate(y,axis=0)}
+        ts.append(data['ts'])
+    if window is None:return {'X':np.concatenate(X,axis=0),'y':np.concatenate(y,axis=0),'ts':np.concatenate(ts,axis=0)}
     else:return {'X':np.concatenate(X,axis=0),'y':np.concatenate(y,axis=0),
-                 'feat_size':data['feat_size'],'window_size':data['window_size']}
+                 'feat_size':data['feat_size'],'window_size':data['window_size'],'ts':np.concatenate(ts,axis=0)}
     
 def read_dataset_from_files(files,features,label,window=None):
-    X=[];y=[]
+    X=[];y=[];ts=[]
     for f in files:
         data=read_csv(f,features,label,window)
         X.append(data['X'])
         y.append(data['y'])
-    if window is None:return {'X':np.concatenate(X,axis=0),'y':np.concatenate(y,axis=0)}
+        ts.append(data['ts'])
+    if window is None:return {'X':np.concatenate(X,axis=0),'y':np.concatenate(y,axis=0),'ts':np.concatenate(ts,axis=0)}
     else:return {'X':np.concatenate(X,axis=0),'y':np.concatenate(y,axis=0),
-                 'feat_size':data['feat_size'],'window_size':data['window_size']}
+                 'feat_size':data['feat_size'],'window_size':data['window_size'],'ts':np.concatenate(ts,axis=0)}

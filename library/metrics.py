@@ -26,6 +26,12 @@ def get_confusion_matrix(X,y,pred_fn=None):
 def AUC_ROC(model,n_class=5):
     if hasattr(model.model,'predict_proba'):
         y_score=model.model.predict_proba(model.X_test)
+        examples,out_dim=y_score.shape
+        extra=n_class-out_dim
+        if extra>0:
+            y_score=np.concatenate([y_score,
+            np.zeros((examples,extra))],axis=1)
+        print(y_score.shape)
     else:
         y_score=model.model.predict(model.X_test)
     y_test=tf.keras.utils.to_categorical(model.y_test,n_class)
