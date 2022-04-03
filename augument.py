@@ -1,4 +1,3 @@
-import glob
 import argparse
 import numpy as np
 import pandas as pd
@@ -16,10 +15,11 @@ restore=args.restore
 #----------------------------------------------------------------------------------------
 
 #Durgapur
-Div_files=glob.glob("./Data/Dgp/*")
-np.random.seed(seed)
-test_set=np.random.choice(Div_files,size=3,replace=False)[[2,1,0]]
-train_set=np.array(list(set(Div_files)-set(test_set)))
+test_set=['./Data/Dgp/Device_2_merged.csv',
+          './Data/Dgp/Device_3_merged.csv',
+          './Data/Dgp/Device_1_merged.csv']
+
+train_set=['./Data/Dgp/Device_4_merged.csv']
 
 
 #Random forest
@@ -74,10 +74,19 @@ df.to_csv("./logs/exp/dgp_rnn_aug.csv",index=False)
 #------------------------------------------------------------------------------
 
 #DELHI
-Div_files=glob.glob("./Data/Delhi/*")
-np.random.seed(seed)
-test_set=np.random.choice(Div_files,size=6,replace=False)[[5,3,1,0,4,2]]
-train_set=np.array(list(set(Div_files)-set(test_set)))
+test_set=['./Data/Delhi/Device_34_merged.csv',
+          './Data/Delhi/Device_35_merged.csv',
+          './Data/Delhi/Device_30_merged.csv',
+          './Data/Delhi/Device_37_merged.csv',
+          './Data/Delhi/Device_33_merged.csv',
+          './Data/Delhi/Device_20_merged.csv']
+
+train_set=['./Data/Delhi/Device_23_merged.csv',
+           './Data/Delhi/Device_22_merged.csv',
+           './Data/Delhi/Device_28_merged.csv',
+           './Data/Delhi/Device_24_merged.csv',
+           './Data/Delhi/Device_18_merged.csv',
+           './Data/Delhi/Device_25_merged.csv']
 
 
 

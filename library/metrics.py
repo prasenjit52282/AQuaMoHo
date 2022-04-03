@@ -31,7 +31,6 @@ def AUC_ROC(model,n_class=5):
         if extra>0:
             y_score=np.concatenate([y_score,
             np.zeros((examples,extra))],axis=1)
-        print(y_score.shape)
     else:
         y_score=model.model.predict(model.X_test)
     y_test=tf.keras.utils.to_categorical(model.y_test,n_class)
