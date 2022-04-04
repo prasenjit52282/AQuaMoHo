@@ -37,7 +37,7 @@ for num_test_dev in [1,2,3,4,5,6]:
     for random_exp in range(num_random_exp):
         train_devs,test_devs=get_train_test_lists(num_test_dev)
         model=RNN(checkpoint_filepath=f'./logs/model/delhi_rnn_vd',seed=seed)
-        model.train_on_file_sets(train_devs,test_devs,epochs=1,batch_size=batch_size)
+        model.train_on_file_sets(train_devs,test_devs,epochs=epochs,batch_size=batch_size)
         met=model.metrics
         met["num_test_dev"]=num_test_dev
         met["rand_exp_id"]=random_exp
