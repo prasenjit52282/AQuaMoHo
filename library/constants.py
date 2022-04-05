@@ -20,6 +20,21 @@ features=\
 'dayofweek'
 ]
 
+old_features=\
+[
+'Temperature',
+'Humidity',
+'feels_like',
+'temp_min',
+'temp_max',
+'pressure',
+'wind_speed',
+'wind_deg',
+'rain',
+'clouds_all',
+'weather'
+]
+
 label='AQI'
 
 window=18

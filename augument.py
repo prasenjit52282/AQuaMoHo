@@ -4,7 +4,7 @@ import pandas as pd
 from library.constants import *
 from library.helper import scale
 from library.models.rnn import RNN
-from library.models.rf import RandomForest
+from library.models.rf import RandomForest,OldRandomForest
 from library.utils import read_dataset_from_files,read_csv
 
 parser = argparse.ArgumentParser(description='Training for different experiments with rf and rnn')
@@ -21,6 +21,27 @@ test_set=['./Data/Dgp/Device_2_merged.csv',
 
 train_set=['./Data/Dgp/Device_4_merged.csv']
 
+#Old Random Forest
+dataset=read_dataset_from_files(train_set,old_features,label,window=None)
+X_train=dataset["X"]
+y_train=dataset["y"]
+
+l=[]
+for i,f in enumerate(test_set):
+    print(i,f)
+    test_data=read_csv(f,old_features,label,window=None)
+    X_test=test_data["X"].values
+    y_test=test_data["y"].values
+    X_train_scaled,X_test_scaled,_=scale(X_train,X_test)
+    model=OldRandomForest()
+    model.train(X_train_scaled,X_test_scaled,y_train,y_test,epochs=None,batch_size=None)
+    l.append(model.metrics)
+    X_train=np.concatenate([X_train,X_test],axis=0)
+    annot=model.pred_fn(X_test_scaled)
+    y_train=np.concatenate([y_train,annot],axis=0)
+
+df=pd.DataFrame(l)
+df.to_csv("./logs/exp/dgp_rf_old_aug.csv",index=False)
 
 #Random forest
 dataset=read_dataset_from_files(train_set,features,label,window=None)
@@ -88,7 +109,27 @@ train_set=['./Data/Delhi/Device_23_merged.csv',
            './Data/Delhi/Device_18_merged.csv',
            './Data/Delhi/Device_25_merged.csv']
 
+#Old Random Forest
+dataset=read_dataset_from_files(train_set,old_features,label,window=None)
+X_train=dataset["X"]
+y_train=dataset["y"]
 
+l=[]
+for i,f in enumerate(test_set):
+    print(i,f)
+    test_data=read_csv(f,old_features,label,window=None)
+    X_test=test_data["X"].values
+    y_test=test_data["y"].values
+    X_train_scaled,X_test_scaled,_=scale(X_train,X_test)
+    model=OldRandomForest()
+    model.train(X_train_scaled,X_test_scaled,y_train,y_test,epochs=None,batch_size=None)
+    l.append(model.metrics)
+    X_train=np.concatenate([X_train,X_test],axis=0)
+    annot=model.pred_fn(X_test_scaled)
+    y_train=np.concatenate([y_train,annot],axis=0)
+
+df=pd.DataFrame(l)
+df.to_csv("./logs/exp/delhi_rf_old_aug.csv",index=False)
 
 #Random Forest
 dataset=read_dataset_from_files(train_set,features,label,window=None)
