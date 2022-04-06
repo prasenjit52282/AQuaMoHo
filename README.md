@@ -13,6 +13,10 @@ Training
 4.(varry device exp- varry number of test devices[1-6]-C2)
 * python3 varryDiv.py
 
+5.(Varry Window size experiments from ws param)
+* python3 varryWindow.py --city="Dgp" --ws="6,12,18,24,30"
+* python3 varryWindow.py --city="Delhi" --ws="6,12,18,24,30"
+
 <hr>
 
 Restoring
@@ -29,6 +33,10 @@ Restoring
 
 4.(varry device exp- varry number of test devices[1-6]-C2)
 * NA(python3 varryDiv.py)
+
+5.(Varry Window size experiments from ws param)
+* python3 varryWindow.py --city="Dgp" --ws="6,12,18,24,30" --restore
+* python3 varryWindow.py --city="Delhi" --ws="6,12,18,24,30" --restore
 
 <hr>
 
