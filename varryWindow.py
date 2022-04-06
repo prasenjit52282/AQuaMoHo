@@ -27,7 +27,7 @@ def datasplit_experiment(exp_name,city,model_fn,test_size=0.3,epochs=None,batch_
 
 l=[]
 for ws in ws_list:
-    met=datasplit_experiment("window_size",city,rnn_model_fn,0.3,1,batch_size,ws,restore)
+    met=datasplit_experiment("window_size",city,rnn_model_fn,0.3,epochs,batch_size,ws,restore)
     l.append(met)
 
 df=pd.DataFrame(l)
