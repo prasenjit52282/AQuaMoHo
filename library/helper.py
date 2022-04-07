@@ -11,12 +11,16 @@ def scale(X_train,X_test):
 
 def split_scale_dataset(data,test_size,seed=seed):
     np.random.seed(seed)
-    X_train, X_test, y_train, y_test = train_test_split(data["X"], data["y"],test_size=test_size,random_state=seed,stratify=data["y"])
+    data_index=np.arange(0,data["y"].shape[0])
+    X_train, X_test, y_train_index, y_test_index = train_test_split(data["X"], data_index,test_size=test_size,random_state=seed,stratify=data["y"])
     X_train,X_test,scaler=scale(X_train,X_test)
+    y_train=data["y"][y_train_index]
+    y_test=data["y"][y_test_index]
+    test_ts=data["ts"][y_test_index]
     if 'window_size'in data:
         X_train=X_train.reshape(-1,data["window_size"],data["feat_size"])
         X_test=X_test.reshape(-1,data["window_size"],data["feat_size"])
-    return X_train,X_test,y_train,y_test,scaler
+    return X_train,X_test,y_train,y_test,scaler,test_ts
 
 def set_scale_dataset(train_data,test_data):
     X_train,X_test,y_train,y_test=train_data["X"],test_data["X"],train_data["y"],test_data["y"]

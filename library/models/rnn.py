@@ -81,7 +81,8 @@ class RNN:
         self.model.load_weights(self.checkpoint_filepath)
         
     def train_on_dataset(self,dataset,test_size,epochs,batch_size):
-        X_train,X_test,y_train,y_test,_=split_scale_dataset(dataset,test_size)
+        X_train,X_test,y_train,y_test,_,test_ts=split_scale_dataset(dataset,test_size)
+        self.test_ts=test_ts #test time stamp is stored
         return self.train(X_train,X_test,y_train,y_test,epochs,batch_size)
         
     def train_on_sets(self,train_dataset,test_dataset,epochs,batch_size):
