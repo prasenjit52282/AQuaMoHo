@@ -11,6 +11,9 @@ def get_performance(X,y,pred_fn=None):
     {'f1_score':f1_score(y,pred,average="weighted"),
      'prec_score':precision_score(y,pred,average="weighted"),
      'rec_score':recall_score(y,pred,average='weighted'),
+     'f1_score_uw':f1_score(y,pred,average="macro"),
+     'prec_score_uw':precision_score(y,pred,average="macro"),
+     'rec_score_uw':recall_score(y,pred,average='macro'),
      'spec_score':specificity(y,pred)}
     return pref
 
