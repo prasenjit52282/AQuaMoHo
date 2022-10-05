@@ -40,25 +40,27 @@ def experiment(exp_name,city,model_fn,epochs=None,batch_size=None,restore=False)
     city=("Delhi"/"Dgp")
     """
     stat=[]
+    nCity=("Both" if city=='*' else city)
     exp_config=get_experiment_config(exp_name,city)
     for exp, conf in exp_config.items():
-        save_pattern=city+"_"+str(exp)+"_"+exp_name
+        save_pattern=nCity+"_"+str(exp)+"_"+exp_name
         met,fig=run_experiment_with(model_fn(path='./logs/model/'+save_pattern,restore=restore),
                                     city,conf["train_devices"],conf["test_devices"],epochs,batch_size)
         fig.savefig('./logs/figs/'+save_pattern+"_auc_roc.png")
         stat.append(met)
     df=pd.DataFrame(stat)
-    df.to_csv(f"./logs/exp/{exp_name}_{city}.csv",index=False)
+    df.to_csv(f"./logs/exp/{exp_name}_{nCity}.csv",index=False)
     return df
 
 def datasplit_experiment(exp_name,city,model_fn,test_size=0.3,epochs=None,batch_size=None,restore=False):
-    save_pattern=city+"_"+exp_name
+    nCity=("Both" if city=='*' else city)
+    save_pattern=nCity+"_"+exp_name
     model=model_fn(path='./logs/model/'+save_pattern,restore=restore)
     fig=model.train_on_files(f"./Data/{city}/*",test_size=test_size,epochs=epochs,batch_size=batch_size)
     met=model.metrics
     met["train"]=(1-test_size)
     met["test"]=test_size
     df=pd.DataFrame([met])
-    df.to_csv(f"./logs/exp/{exp_name}_{city}.csv",index=False)
+    df.to_csv(f"./logs/exp/{exp_name}_{nCity}.csv",index=False)
     fig.savefig('./logs/figs/'+save_pattern+"_auc_roc.png")
     return df
