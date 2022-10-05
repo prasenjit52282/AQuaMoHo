@@ -18,7 +18,7 @@ Training
 * python3 varryWindow.py --city="Delhi" --ws="6,12,18,24,30"
 
 6.(Training for Both City 70-30 split)
-* python3 train.py --city="*"
+* python3 train.py --city="D*"
 <hr>
 
 Restoring
@@ -41,7 +41,7 @@ Restoring
 * python3 varryWindow.py --city="Delhi" --ws="6,12,18,24,30" --restore
 
 6.(Training for Both City 70-30 split)
-* python3 train.py --city="*" --restore
+* python3 train.py --city="D*" --restore
 
 <hr>
 

@@ -5,7 +5,7 @@ from library.models.rf import RandomForest,OldRandomForest
 from library.experiments import experiment,datasplit_experiment
 
 parser = argparse.ArgumentParser(description='Training for different experiments with rf and rnn')
-parser.add_argument('--city', type=str, default="Dgp", help='Required name of city (Dgp/Delhi/*)')
+parser.add_argument('--city', type=str, default="Dgp", help='Required name of city (Dgp/Delhi/D*)')
 parser.add_argument('--restore', help='Required decision to restore weights',action='store_true')
 
 args = parser.parse_args()
