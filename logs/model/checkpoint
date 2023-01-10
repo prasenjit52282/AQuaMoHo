@@ -1,2 +1,2 @@
-model_checkpoint_path: "Delhi_split_rnn"
-all_model_checkpoint_paths: "Delhi_split_rnn"
+model_checkpoint_path: "delhi_rnn_vd"
+all_model_checkpoint_paths: "delhi_rnn_vd"

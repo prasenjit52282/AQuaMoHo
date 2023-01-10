@@ -1,5 +1,5 @@
 from ..metrics import *
-from ..constants import seed,features,label
+from ..constants import seed,features,label,old_features
 from ..utils import read_dataset,read_dataset_from_files
 from ..helper import split_scale_dataset,set_scale_dataset
 from sklearn.ensemble import RandomForestClassifier
@@ -59,3 +59,13 @@ class RandomForest:
     def AUC_ROC(self):
         fig=AUC_ROC(self)
         return fig
+
+class OldRandomForest(RandomForest):
+    def __init__(self,n_est=100,max_depth=20,restore=None):
+        super().__init__(n_est,max_depth,restore)
+        
+    def train_on_files(self,pattern,test_size,old_features=old_features,label=label,epochs=None,batch_size=None):
+        return super().train_on_files(pattern,test_size,old_features,label,epochs,batch_size)
+        
+    def train_on_file_sets(self,train_files,test_files,old_features=old_features,label=label,epochs=None,batch_size=None):
+        return super().train_on_file_sets(train_files,test_files,old_features,label,epochs,batch_size)
