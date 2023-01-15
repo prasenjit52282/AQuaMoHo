@@ -59,7 +59,7 @@ AQuaMoHo
 # Reference
 To refer the <strong><em>AQuaMoHo</em></strong> framework or the dataset, please cite the following works.
 
-Download the paper from here [ACM BuildSys 2021](https://dl.acm.org/doi/abs/10.1145/3486611.3486663) | [ArXiv](https://arxiv.org/pdf/2204.11484.pdf).
+Download the papers from here [ACM BuildSys 2021](https://dl.acm.org/doi/abs/10.1145/3486611.3486663) | [ArXiv](https://arxiv.org/pdf/2204.11484.pdf).
 
 BibTex Reference:
 ```

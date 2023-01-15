@@ -4,4 +4,4 @@ seaborn
 datetime
 matplotlib
 scikit-learn
-tensorflow==2.4.1
+tensorflow
