@@ -59,7 +59,7 @@ AQuaMoHo
 # Reference
 To refer the <strong><em>AQuaMoHo</em></strong> framework or the dataset, please cite the following works.
 
-Download the papers from here [ACM BuildSys 2021](https://dl.acm.org/doi/abs/10.1145/3486611.3486663) | [ArXiv](https://arxiv.org/pdf/2204.11484.pdf).
+Download the papers from here [ACM BuildSys 2021](https://dl.acm.org/doi/abs/10.1145/3486611.3486663) | [ACM TOSN 2023](https://dl.acm.org/doi/10.1145/3580279).
 
 BibTex Reference:
 ```
@@ -72,11 +72,19 @@ BibTex Reference:
 }
 ```
 ```
-@article{pramanik2022aquamoho,
-  title={AQuaMoHo: Localized Low-Cost Outdoor Air Quality Sensing over a Thermo-Hygrometer},
-  author={Pramanik, Prithviraj and Karmakar, Prasenjit and Sharma, Praveen Kumar and Chatterjee, Soumyajit and Nandi, Subrata and Chakraborty, Sandip and Saha, Mousumi and Saha, Sujoy},
-  journal={arXiv preprint arXiv:2204.11484},
-  year={2022}
+@article{10.1145/3580279,
+author = {Pramanik, Prithviraj and Karmakar, Prasenjit and Sharma, Praveen Kumar and Chatterjee, Soumyajit and Roy, Abhijit and Mandal, Santanu and Nandi, Subrata and Chakraborty, Sandip and Saha, Mousumi and Saha, Sujoy},
+title = {AQuaMoHo: Localized Low-Cost Outdoor Air Quality Sensing over a Thermo-Hygrometer},
+year = {2023},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+issn = {1550-4859},
+url = {https://doi.org/10.1145/3580279},
+doi = {10.1145/3580279},
+note = {Just Accepted},
+journal = {ACM Trans. Sen. Netw.},
+month = {jan},
+keywords = {Air Quality Monitoring, Feature Analysis, AQI Annotation, Sensing, Thermo-Hygrometer}
 }
 ```
 For questions and general feedback, contact Sujoy Saha (sujoy.saha@cse.nitdgp.ac.in).
